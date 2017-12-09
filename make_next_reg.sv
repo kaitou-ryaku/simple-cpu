@@ -48,22 +48,26 @@ module make_next_reg(
   assign write_value  = end_write_value;
   /*}}}*/
 
+  // オペコードのワイヤーをあらかじめ定義
+  logic [7:0] ope
+  assign ope [7:0] = memory[ip];
+
   // 即値のワイヤーをあらかじめ定義
   logic [7:0] imm;
-  assign imm [ 7:0] = memory[ip+1];
+  assign imm [7:0] = memory[ip+1];
 
-  // スタクのワイヤーをあらかじめ定義
+  // スタックのワイヤーをあらかじめ定義
   logic  [7:0] stack;
   assign stack = memory[sp];
 
-  // オペランドワイヤー
+  // オペランドのワイヤー
   logic [7:0] y;
 
   // endのワイヤーを作る
   always_comb begin
 
     // yをあらかじめ定義/*{{{*/
-    case (memory[ip][1:0])
+    case (ope[1:0])
       2'b00: y = a;
       2'b01: y = b;
       2'b10: y = c;
@@ -71,20 +75,20 @@ module make_next_reg(
     endcase/*}}}*/
 
     // endワイヤーを作る
-    case (memory[ip][7])
+    case (ope[7])
       1'b0: begin                     // 計算関係命令   mov,  add, sub, cmp/*{{{*/
         end_sp          = sp;
         end_write_flag  = 0;
         end_write_addr  = 0;
         end_write_value = 0;
 
-        case (memory[ip][6])
+        case (ope[6])
           1'b0: begin                 // ope x, y
             end_ip = ip + 1;
-            case (memory[ip][5:4])
+            case (ope[5:4])
               2'b00: begin            // mov x, y/*{{{*/
                 end_zf = zf;
-                case (memory[ip][3:2])
+                case (ope[3:2])
                   2'b00: begin        // mov a, y
                     end_a = y;
                     end_b = b;
@@ -116,7 +120,7 @@ module make_next_reg(
               end/*}}}*/
               2'b01: begin            // add x, y/*{{{*/
                 end_zf = zf;
-                case (memory[ip][3:2])
+                case (ope[3:2])
                   2'b00: begin        // add a, y
                     end_a = a + y;
                     end_b = b;
@@ -148,7 +152,7 @@ module make_next_reg(
               end/*}}}*/
               2'b10: begin            // sub x, y/*{{{*/
                 end_zf = zf;
-                case (memory[ip][3:2])
+                case (ope[3:2])
                   2'b00: begin        // sub a, y
                     end_a = a - y;
                     end_b = b;
@@ -183,7 +187,7 @@ module make_next_reg(
                 end_b = b;
                 end_c = c;
                 end_d = d;
-                case (memory[ip][3:2])
+                case (ope[3:2])
                   2'b00: end_zf = a-y ? 0 : 1; // cmp a, y
                   2'b01: end_zf = b-y ? 0 : 1; // cmp b, y
                   2'b10: end_zf = c-y ? 0 : 1; // cmp c, y
@@ -195,10 +199,10 @@ module make_next_reg(
 
           1'b1: begin                 // ope x, imm
             end_ip = ip + 2;        // immのけipを増や
-            case (memory[ip][5:4])
+            case (ope[5:4])
               2'b00: begin            // mov x, imm/*{{{*/
                 end_zf = zf;
-                case (memory[ip][3:2])
+                case (ope[3:2])
                   2'b00: begin        // mov a, imm
                     end_a = imm;
                     end_b = b;
@@ -230,7 +234,7 @@ module make_next_reg(
               end/*}}}*/
               2'b01: begin            // add x, imm/*{{{*/
                 end_zf = zf;
-                case (memory[ip][3:2])
+                case (ope[3:2])
                   2'b00: begin        // add a, imm
                     end_a = a + imm;
                     end_b = b;
@@ -262,7 +266,7 @@ module make_next_reg(
               end/*}}}*/
               2'b10: begin            // sub x, imm/*{{{*/
                 end_zf = zf;
-                case (memory[ip][3:2])
+                case (ope[3:2])
                   2'b00: begin        // sub a, imm
                     end_a = a - imm;
                     end_b = b;
@@ -297,7 +301,7 @@ module make_next_reg(
                 end_b = b;
                 end_c = c;
                 end_d = d;
-                case (memory[ip][3:2])
+                case (ope[3:2])
                   2'b00: end_zf = a-imm ? 0 : 1;       // cmp a, imm
                   2'b01: end_zf = b-imm ? 0 : 1;       // cmp b, imm
                   2'b10: end_zf = c-imm ? 0 : 1;       // cmp c, imm
@@ -311,14 +315,14 @@ module make_next_reg(
       end/*}}}*/
       1'b1: begin                     // メモリ関連の命令 push, pop, jmp, hlt/*{{{*/
         end_zf = zf;
-        case (memory[ip][6:4])
+        case (ope[6:4])
           3'b000: begin               // push/*{{{*/
             end_ip = ip + 1;
             end_sp = sp - 1;
             end_write_flag = 1;
             end_write_addr = sp-1;
 
-            case (memory[ip][3:2])
+            case (ope[3:2])
               2'b00: end_write_value = a; // push a
               2'b01: end_write_value = b; // push b
               2'b10: end_write_value = c; // push c
@@ -331,7 +335,7 @@ module make_next_reg(
             end_write_flag = 0;
             end_write_addr = 0;
 
-            case (memory[ip][3:2])
+            case (ope[3:2])
               2'b00: end_a = stack; // pop a
               2'b01: end_b = stack; // pop b
               2'b10: end_c = stack; // pop c
