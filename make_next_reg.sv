@@ -49,7 +49,7 @@ module make_next_reg(
   /*}}}*/
 
   // オペコードのワイヤーをあらかじめ定義
-  logic [7:0] ope
+  logic [7:0] ope;
   assign ope [7:0] = memory[ip];
 
   // 即値のワイヤーをあらかじめ定義
@@ -198,7 +198,7 @@ module make_next_reg(
           end
 
           1'b1: begin                 // ope x, imm
-            end_ip = ip + 2;        // immのけipを増や
+            end_ip = ip + 2;
             case (ope[5:4])
               2'b00: begin            // mov x, imm/*{{{*/
                 end_zf = zf;
@@ -317,6 +317,10 @@ module make_next_reg(
         end_zf = zf;
         case (ope[6:4])
           3'b000: begin               // push/*{{{*/
+            end_a  = a;
+            end_b  = b;
+            end_c  = c;
+            end_d  = d;
             end_ip = ip + 1;
             end_sp = sp - 1;
             end_write_flag = 1;
@@ -336,10 +340,30 @@ module make_next_reg(
             end_write_addr = 0;
 
             case (ope[3:2])
-              2'b00: end_a = stack; // pop a
-              2'b01: end_b = stack; // pop b
-              2'b10: end_c = stack; // pop c
-              2'b11: end_d = stack; // pop d
+              2'b00: begin
+                end_a = stack; // pop a
+                end_b = b;
+                end_c = c;
+                end_d = d;
+              end
+              2'b01: begin
+                end_a = a;
+                end_b = stack; // pop b
+                end_c = c;
+                end_d = d;
+              end
+              2'b10: begin
+                end_a = a;
+                end_b = b;
+                end_c = stack; // pop c
+                end_d = d;
+              end
+              2'b11: begin
+                end_a = a;
+                end_b = b;
+                end_c = c;
+                end_d = stack; // pop d
+              end
             endcase
           end/*}}}*/
           3'b100: begin               // jmp imm/*{{{*/
