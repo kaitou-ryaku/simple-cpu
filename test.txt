@@ -1,0 +1,27 @@
+0100_00_00 00000001 // mov  eax, imm -- (eax=01)
+0101_00_00 00000001 // add  eax, imm -- (eax=10)
+0110_00_00 00000001 // sub  eax, imm -- (eax=01)
+0111_00_00 00000001 // cmp  eax, imm -- (zf = 1)
+0111_00_00 00000010 // cmp  eax, imm -- (zf = 0)
+
+0000_01_00          // mov  ebx, eax -- (eax=01 ebx=01)
+0001_00_01          // add  eax, ebx -- (eax=10 ebx=01)
+0010_00_01          // sub  eax, ebx -- (eax=01 ebx=01)
+0011_00_01          // cmp  eax, ebx -- (jz = 1)
+
+1000_00_00          // push eax      -- (push 01)
+1001_10_00          // pop  ecx      -- (pop  01)
+
+1100_00_00 00000001 // jmp  imm      -- (goto jz)
+1111_11_11          // INVALID VALUE
+
+1101_00_00 00000001 // jz   imm      -- (goto jz, zf=1)
+1111_11_11          // INVALID VALUE
+
+0111_00_00 00000000 // cmp  eax, imm -- zf = 0
+1101_00_00 00000001 // jz   imm      -- (goto jz, zf=0)
+0100_00_00 11111111 // mov  eax, imm -- (eax=11111111)
+
+1100_00_00          // hlt
+
+0100_00_00 00000000 // mov  eax, imm -- (eax=00000000) -- will not be executed

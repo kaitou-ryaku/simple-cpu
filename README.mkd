@@ -1,0 +1,48 @@
+# Simple CPU
+
+This repository is for Xilinx Artix-7 35T Arty FPGA Evaluation Kit.
+
+HDL codes are written in System Verilog.
+
+Details are shown in http://sikakuisankaku.hatenablog.com/entry/2017/12/08/212749
+
+### Register
+
+|name|type|size|
+|:--|:--|:--|
+|a|for calculation|8bit|
+|b|for calculation|8bit|
+|c|for calculation|8bit|
+|d|for calculation|8bit|
+|sp|stack pointer|8bit|
+|ip|program counter|8bit|
+|zf|zero flag|1bit|
+
+### Instruction
+
+|mnemonic|binary|size|explanation|
+|:--|:--|:--|:--|
+|mov  x, y    |0000 xx yy    | 8bit|x = y|
+|add  x, y    |0001 xx yy    | 8bit|x = x + y|
+|sub  x, y    |0010 xx yy    | 8bit|x = x - y|
+|cmp  x, y    |0011 xx yy    | 8bit|update zf by x - y|
+|mov  x, imm  |0100 xx 00 imm|16bit|x = imm|
+|add  x, imm  |0101 xx 00 imm|16bit|x = x + imm|
+|sub  x, imm  |0110 xx 00 imm|16bit|x = x - imm|
+|cmp  x, imm  |0111 xx 00 imm|16bit|update zf by x - imm|
+|push x       |1000 xx 00    | 8bit|push to stack|
+|pop  x       |1001 xx 00    | 8bit|pull from stack|
+|jmp  imm     |1010 00 00 imm|16bit|ip = ip(next) + imm|
+|jz   imm     |1100 00 00 imm|16bit|if (zf == 1) ip=ip(next) + imm|
+|jnz  imm     |1101 00 00 imm|16bit|if (zf != 1) ip=ip(next) + imm|
+|hlt          |1111 00 00    | 8bit|stop|
+
+The size of `imm` 8 bit.
+`x` and `y` are
+
+|register name|binary expression|
+|:--|:--|
+|a|00|
+|b|01|
+|c|10|
+|d|11|
