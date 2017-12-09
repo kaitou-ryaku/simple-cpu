@@ -6,6 +6,10 @@ HDL codes are written in System Verilog.
 
 Details are shown in http://sikakuisankaku.hatenablog.com/entry/2017/12/08/212749
 
+### Fibonacci calculation
+
+![fib.gif](fib.gif)
+
 ### Register
 
 |name|type|size|
