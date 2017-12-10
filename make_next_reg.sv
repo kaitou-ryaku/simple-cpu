@@ -50,15 +50,15 @@ module make_next_reg(
 
   // オペコードのワイヤーをあらかじめ定義
   logic [7:0] ope;
-  assign ope [7:0] = memory[ip];
+  assign ope [7:0]   = memory[ip];
 
   // 即値のワイヤーをあらかじめ定義
   logic [7:0] imm;
-  assign imm [7:0] = memory[ip+1];
+  assign imm [7:0]   = memory[ip+1];
 
   // スタックのワイヤーをあらかじめ定義
   logic  [7:0] stack;
-  assign stack = memory[sp];
+  assign stack [7:0] = memory[sp];
 
   // オペランドのワイヤー
   logic [7:0] y;
