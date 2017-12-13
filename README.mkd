@@ -50,3 +50,7 @@ The size of `imm` 8 bit.
 |b|01|
 |c|10|
 |d|11|
+
+### License
+
+MIT
